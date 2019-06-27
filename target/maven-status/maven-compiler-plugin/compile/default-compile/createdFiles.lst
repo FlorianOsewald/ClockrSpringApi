@@ -13,6 +13,7 @@ com\osewald\springrest\h2\model\Workday.class
 com\osewald\springrest\h2\controller\WorkdayController.class
 com\osewald\springrest\h2\controller\UserController.class
 com\osewald\springrest\h2\model\DailyEventDto.class
+com\osewald\springrest\h2\controller\RestConfig.class
 com\osewald\springrest\h2\model\Timestamp.class
 com\osewald\springrest\h2\repo\WorkdayRepository.class
 com\osewald\springrest\h2\repo\UserRepository.class

@@ -35,7 +35,8 @@ public class DailyEventController {
 	
 	@GetMapping("/dailyEvents/workday/{workday}")
 	public List<DailyEvent> getEventsOfWorkday(@PathVariable Workday workday) {
-		List<DailyEvent> evnts = repository.findByWorkday(workday);
+		//List<DailyEvent> evnts = repository.findByWorkday(workday);
+		List<DailyEvent> evnts = repository.findByWorkdayCustom(workday);
 		return evnts;
 	}
 	
@@ -45,7 +46,9 @@ public class DailyEventController {
 		System.out.println("Creating Daily Event: ");
 		System.out.println("Daily Event: " + dto.getEvent().getEventType() + " " + dto.getEvent().getTime());
 		System.out.println("Workday of Event: " + dto.getWorkday().getId());
-		DailyEvent _dailyEvent = repository.save(new DailyEvent(dto.getEvent().getEventType(), dto.getEvent().getTime(), dto.getWorkday()));
+		//DailyEvent _dailyEvent = repository.save(new DailyEvent(dto.getEvent().getEventType(), dto.getEvent().getTime(), dto.getWorkday()));
+		repository.postDailyEventCustom(dto.getEvent().getTime(), dto.getEvent().getEventType(), dto.getWorkday());
+		DailyEvent _dailyEvent = new DailyEvent(dto.getEvent().getEventType(), dto.getEvent().getTime(), dto.getWorkday());
 		return _dailyEvent;
 	}
 	
@@ -70,8 +73,9 @@ public class DailyEventController {
 	public ResponseEntity<String> deleteDailyEvent(@PathVariable("id") long id) {
 		System.out.println("Delete dailyEvent with ID = " + id + "...");
 		 
-	    repository.deleteById(id);
-	 
+	    //repository.deleteById(id);
+		repository.deleteDailyEventCustom(id);
+		
 	    return new ResponseEntity<>("DailyEvent has been deleted!", HttpStatus.OK);
 	}
 	
@@ -80,7 +84,10 @@ public class DailyEventController {
 	public ResponseEntity<String> deleteEventsOfWorkday(@PathVariable Workday workday) {
 		System.out.println("Delete All dailyEvents by Workday:" + workday + "...");
 		
-		repository.deleteAllByWorkday(workday);
+		//repository.deleteAllByWorkday(workday);
+		
+		repository.deleteAllByWorkdayCustom(workday);
+		
 		return new ResponseEntity<>("DailyEvents have been deleted!", HttpStatus.OK);
 	}
 

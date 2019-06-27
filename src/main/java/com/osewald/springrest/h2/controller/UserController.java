@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,42 +39,67 @@ public class UserController {
 
 		return users;
 	}
-	
+
 	@GetMapping("/users/username/{username}")
 	public User getUserByUsername(@PathVariable String username) {
 		User user = repository.findByUsername(username);
 		return user;
 	}
-	
+
 	@PostMapping(value = "/users/login")
 	public User tryLogIn(@RequestBody User user) {
 		System.out.println("Trying to log in User: " + user.getUsername());
-		/*
-		UsernamePasswordToken token = new UsernamePasswordToken( user.getUsername(), user.getPassword());
+
+		UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), user.getPassword());
 		Subject currentUser = SecurityUtils.getSubject();
 		try {
 			currentUser.login(token);
-			return repository.findByUsername(user.getUsername());
+			System.out.println("Login Success!");
+			//User usr = repository.findByUsername(user.getUsername());
+			
+			User usr = repository.findByUsernameCustom(user.getUsername());
+			
+			System.out.println(usr.getUsername() + " with Role: " + usr.getUserRolle() + " has just logged in!");
+			return usr;
 		} catch (Exception e) {
 			System.out.println("Login Failed!");
+			System.out.println(e.getMessage());
 			return null;
-		} */
-		for (User usr : repository.findAll()) {
-			System.out.println("Entered Usr: " + user.getUsername() + " / PW: " + user.getPassword() + " DB Entry: Usr: " + usr.getUsername() + " / PW: " + usr.getPassword());
-			if ((usr.getUsername().matches(user.getUsername()) )) {
-				System.out.println("found matching Credentials!");
-				return usr;
-			}
-		}
+		} /*
+			 * for (User usr : repository.findAll()) { System.out.println("Entered Usr: " +
+			 * user.getUsername() + " / PW: " + user.getPassword() + " DB Entry: Usr: " +
+			 * usr.getUsername() + " / PW: " + usr.getPassword()); if
+			 * ((usr.getUsername().matches(user.getUsername()) )) {
+			 * System.out.println("found matching Credentials!"); return usr; } } return
+			 * null;
+			 */
+	}
+
+	@PostMapping("/users/logout")
+	public String logout() {
+		System.out.println("Logging subject out!");
+		Subject subject = SecurityUtils.getSubject();
+		subject.logout();
+		
 		return null;
 	}
-	
+
 	@PostMapping(value = "/users/create")
 	public User postUser(@RequestBody User newUser) {
 
-		User _user = repository.save(new User(newUser.getUsername(), newUser.getPassword(), newUser.getUserRolle(), newUser.getAnrede(), newUser.getHandle(),
-				newUser.getWorkStartClockrMessage(), newUser.getBreakStartClockrMessage(), newUser.getBreakEndClockrMessage(), newUser.getWorkEndClockrMessage(),
-				newUser.getProfilePicture()));
+		/*
+		User _user = repository.save(new User(newUser.getUsername(), newUser.getPassword(), newUser.getUserRolle(),
+				newUser.getAnrede(), newUser.getHandle(), newUser.getWorkStartClockrMessage(),
+				newUser.getBreakStartClockrMessage(), newUser.getBreakEndClockrMessage(),
+				newUser.getWorkEndClockrMessage(), newUser.getProfilePicture()));
+		*/
+		repository.postUserCustom(newUser.getUsername(), newUser.getPassword(), newUser.getUserRolle().toString(), newUser.getProfilePicture(), newUser.getWorkStartClockrMessage(), newUser.getBreakStartClockrMessage(), newUser.getBreakEndClockrMessage(), newUser.getWorkEndClockrMessage(), newUser.getVorname(), newUser.getNachname(), newUser.getAnrede(), newUser.getHandle());
+		
+		
+		User _user = new User(newUser.getUsername(), newUser.getPassword(), newUser.getUserRolle(),
+				newUser.getAnrede(), newUser.getHandle(), newUser.getWorkStartClockrMessage(),
+				newUser.getBreakStartClockrMessage(), newUser.getBreakEndClockrMessage(),
+				newUser.getWorkEndClockrMessage(), newUser.getProfilePicture());
 		return _user;
 	}
 
@@ -80,8 +107,9 @@ public class UserController {
 	public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
 		System.out.println("Update User with ID = " + id + "...");
 
-		Optional<User> userData = repository.findById(id);
-
+		//Optional<User> userData = repository.findById(id);
+		Optional<User> userData = repository.findByIdCustom(id);
+		
 		if (userData.isPresent()) {
 			User _user = userData.get();
 			_user.setVorname(user.getVorname());
@@ -94,7 +122,13 @@ public class UserController {
 			_user.setWorkEndClockrMessage(user.getWorkEndClockrMessage());
 			_user.setAnrede(user.getAnrede());
 			_user.setHandle(user.getHandle());
-			return new ResponseEntity<>(repository.save(_user), HttpStatus.OK);
+			_user.setId(user.getId());
+			
+			//return new ResponseEntity<>(repository.save(_user), HttpStatus.OK);
+			repository.updateUserCustom(_user.getId(), _user.getUsername(), _user.getPassword(), _user.getUserRolle().toString(), _user.getProfilePicture(), _user.getWorkStartClockrMessage(), _user.getBreakStartClockrMessage(), _user.getBreakEndClockrMessage(), _user.getWorkEndClockrMessage(), _user.getVorname(), _user.getNachname(), _user.getAnrede(), _user.getHandle());
+			
+			return new ResponseEntity<>(_user, HttpStatus.OK);
+			
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
