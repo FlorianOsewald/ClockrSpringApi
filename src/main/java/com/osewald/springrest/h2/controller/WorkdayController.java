@@ -93,7 +93,6 @@ public class WorkdayController {
 	}
 	
 	
-	@Transactional
 	@DeleteMapping("/workdays/{id}")
 	public ResponseEntity<String> deleteWorkday(@PathVariable("id") long id) {
 	    System.out.println("Delete Workday with ID = " + id + "...");

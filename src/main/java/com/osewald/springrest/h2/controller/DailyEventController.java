@@ -80,7 +80,6 @@ public class DailyEventController {
 	}
 	
 	@DeleteMapping("/dailyEvents/workday/{workday}")
-	@Transactional
 	public ResponseEntity<String> deleteEventsOfWorkday(@PathVariable Workday workday) {
 		System.out.println("Delete All dailyEvents by Workday:" + workday + "...");
 		

@@ -8,6 +8,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.osewald.springrest.h2.model.User;
@@ -47,7 +50,7 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/users/login")
-	public User tryLogIn(@RequestBody User user) {
+	public ResponseEntity<User> tryLogIn(@RequestBody User user) {
 		System.out.println("Trying to log in User: " + user.getUsername());
 
 		UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), user.getPassword());
@@ -56,32 +59,17 @@ public class UserController {
 			currentUser.login(token);
 			System.out.println("Login Success!");
 			//User usr = repository.findByUsername(user.getUsername());
-			
+
 			User usr = repository.findByUsernameCustom(user.getUsername());
-			
+
 			System.out.println(usr.getUsername() + " with Role: " + usr.getUserRolle() + " has just logged in!");
-			return usr;
+
+			return ResponseEntity.ok(usr);
 		} catch (Exception e) {
 			System.out.println("Login Failed!");
 			System.out.println(e.getMessage());
-			return null;
-		} /*
-			 * for (User usr : repository.findAll()) { System.out.println("Entered Usr: " +
-			 * user.getUsername() + " / PW: " + user.getPassword() + " DB Entry: Usr: " +
-			 * usr.getUsername() + " / PW: " + usr.getPassword()); if
-			 * ((usr.getUsername().matches(user.getUsername()) )) {
-			 * System.out.println("found matching Credentials!"); return usr; } } return
-			 * null;
-			 */
-	}
-
-	@PostMapping("/users/logout")
-	public String logout() {
-		System.out.println("Logging subject out!");
-		Subject subject = SecurityUtils.getSubject();
-		subject.logout();
-		
-		return null;
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 	}
 
 	@PostMapping(value = "/users/create")
