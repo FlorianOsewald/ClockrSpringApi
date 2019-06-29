@@ -2,40 +2,36 @@ package com.osewald.springrest.h2.controller;
 
 import java.sql.Date;
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
+import com.osewald.springrest.h2.model.Workday;
+import com.osewald.springrest.h2.repo.WorkdayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.osewald.springrest.h2.repo.WorkdayRepository;
-import com.osewald.springrest.h2.model.Workday;
-
-@CrossOrigin(origins = "http://localhost:4200")
-@RestController
-@RequestMapping("/api")
+//@RestController
+//@RequestMapping("/api")
+@Component
+@Path("/api")
 public class WorkdayController {
 	
 	@Autowired
 	WorkdayRepository repository;
 	
 	
-	@GetMapping("/workdays")
+	//@GetMapping("/workdays")
+	@GET
+	@Path("/workdays")
 	public List<Workday> getAllWorkdays() {
 		List<Workday> workdays = new ArrayList<>();
 		repository.findAll().forEach(workdays::add);
@@ -43,24 +39,34 @@ public class WorkdayController {
 		return workdays;
 	}
 	
-	@GetMapping("/workdays/username/{username}")
-	public Workday getTodayWorkdayByUser(@PathVariable String username) {
+	//@GetMapping("/workdays/username/{username}")
+	//public Workday getTodayWorkdayByUser(@PathVariable String username) {
+	@GET
+	@Path("/workdays/username/{username}")
+	public Workday getTodayWorkdayByUser(@PathParam("username") String username) {
 		System.out.println("Trying to retrieve workday Today by User: " + username + "!");
 		Workday wd = repository.getWorkdayTodayUsername(username);
+		System.out.println("WD RESULT: " + wd.getDate());
 		return wd;
 		
 	}
 	
-	@GetMapping("/workdays/{username}")
-	public List<Workday> findAllWorkdaysByUser(@PathVariable String username) {
+	//@GetMapping("/workdays/{username}")
+	//public List<Workday> findAllWorkdaysByUser(@PathVariable String username) {
+	@GET
+	@Path("/workdays/{username}")
+	public List<Workday> findAllWorkdaysByUser(@PathParam("username") String username) {
 		List<Workday> wds = new ArrayList<>();
 		repository.findByUsernameCustom(username).forEach(wds::add);
 	
 		return wds;
 	}
 	
-	@PutMapping("/workdays/{id}")
-	public ResponseEntity<Workday> updateWorkday(@PathVariable("id") long id, @RequestBody Workday workday) {
+	//@PutMapping("/workdays/{id}")
+	//public ResponseEntity<Workday> updateWorkday(@PathVariable("id") long id, @RequestBody Workday workday) {
+	@PUT
+	@Path("/workdays/{id}")
+	public ResponseEntity<Workday> updateWorkday(@PathParam("id") long id, Workday workday) {	
 		System.out.println("Update Workday with ID = " + id + "...");
 		
 		//Optional<Workday> workdayData = repository.findById(id);
@@ -79,23 +85,29 @@ public class WorkdayController {
 		}
 	}
 	
-	@PostMapping("/workdays/create")
-	public Workday postWorkday(@RequestBody Workday workday) {
+	
+	//@PostMapping("/workdays/create")
+	//public Workday postWorkday(@RequestBody Workday workday) {
+	@POST
+	@Path("/workdays/create")
+	public Workday postWorkday(Workday workday) {
 		
 		Date tmp = new Date(new java.util.Date().getTime());
 
 		System.out.println("Creating Workday. Template workday date: " + tmp);
 		
-		repository.postWorkdayCustom(workday.getDate(), workday.getUsername());
-		Workday _workday = new Workday(workday.getDate(), workday.getUsername());
-		//Workday _workday = repository.save(new Workday(tmp, workday.getUsername()));
+		//repository.postWorkdayCustom(workday.getDate(), workday.getUsername());
+		//Workday _workday = new Workday(workday.getDate(), workday.getUsername());
+		//Switch wieder auf Std-Query da Insert nicht supported in @Query 
+		Workday _workday = repository.save(new Workday(tmp, workday.getUsername()));
 		return _workday;
 	}
 	
 	
-	@Transactional
-	@DeleteMapping("/workdays/{id}")
-	public ResponseEntity<String> deleteWorkday(@PathVariable("id") long id) {
+	//@DeleteMapping("/workdays/{id}")
+	@DELETE
+	@Path("/workdays/{id}")
+	public ResponseEntity<String> deleteWorkday(@PathParam("id") long id) {
 	    System.out.println("Delete Workday with ID = " + id + "...");
 	 
 	    //repository.deleteById(id);

@@ -4,33 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
+import com.osewald.springrest.h2.model.User;
+import com.osewald.springrest.h2.repo.UserRepository;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
-import com.osewald.springrest.h2.model.User;
-import com.osewald.springrest.h2.repo.UserRepository;
 
-@CrossOrigin(origins = "http://localhost:4200")
-@RestController
-@RequestMapping("/api")
+//@RestController
+//@RequestMapping("/api")
+
+@Component
+@Path("/api")
 public class UserController {
 
 	@Autowired
 	UserRepository repository;
 
-	@GetMapping("/users")
+	//@GetMapping("/users")
+	@GET
+	@Path("/users")
 	public List<User> getAllUsers() {
 		System.out.println("Get all Users...");
 
@@ -40,14 +43,19 @@ public class UserController {
 		return users;
 	}
 
-	@GetMapping("/users/username/{username}")
-	public User getUserByUsername(@PathVariable String username) {
+	//@GetMapping("/users/username/{username}")
+	@GET
+	@Path("/users/username/{username}")
+	public User getUserByUsername(@PathParam("username") String username) {
 		User user = repository.findByUsername(username);
 		return user;
 	}
 
-	@PostMapping(value = "/users/login")
-	public User tryLogIn(@RequestBody User user) {
+	//@PostMapping(value = "/users/login")
+	//public ResponseEntity<User> tryLogIn(@RequestBody User user) {
+	@POST
+	@Path("/users/login")
+	public ResponseEntity<User> tryLogIn(User user) {
 		System.out.println("Trying to log in User: " + user.getUsername());
 
 		UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), user.getPassword());
@@ -56,55 +64,47 @@ public class UserController {
 			currentUser.login(token);
 			System.out.println("Login Success!");
 			//User usr = repository.findByUsername(user.getUsername());
-			
+
 			User usr = repository.findByUsernameCustom(user.getUsername());
-			
+
 			System.out.println(usr.getUsername() + " with Role: " + usr.getUserRolle() + " has just logged in!");
-			return usr;
+
+			return ResponseEntity.ok(usr);
 		} catch (Exception e) {
 			System.out.println("Login Failed!");
 			System.out.println(e.getMessage());
-			return null;
-		} /*
-			 * for (User usr : repository.findAll()) { System.out.println("Entered Usr: " +
-			 * user.getUsername() + " / PW: " + user.getPassword() + " DB Entry: Usr: " +
-			 * usr.getUsername() + " / PW: " + usr.getPassword()); if
-			 * ((usr.getUsername().matches(user.getUsername()) )) {
-			 * System.out.println("found matching Credentials!"); return usr; } } return
-			 * null;
-			 */
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 	}
 
-	@PostMapping("/users/logout")
-	public String logout() {
-		System.out.println("Logging subject out!");
-		Subject subject = SecurityUtils.getSubject();
-		subject.logout();
-		
-		return null;
-	}
+	//@PostMapping(value = "/users/create")
+	//public User postUser(@RequestBody User newUser) {
+	@POST
+	@Path("/users/create")
+	public User postUser(User newUser) {
 
-	@PostMapping(value = "/users/create")
-	public User postUser(@RequestBody User newUser) {
-
-		/*
+		//Wieder zurück zur Originalen Query da Insert nicht supported in @Query
 		User _user = repository.save(new User(newUser.getUsername(), newUser.getPassword(), newUser.getUserRolle(),
 				newUser.getAnrede(), newUser.getHandle(), newUser.getWorkStartClockrMessage(),
 				newUser.getBreakStartClockrMessage(), newUser.getBreakEndClockrMessage(),
 				newUser.getWorkEndClockrMessage(), newUser.getProfilePicture()));
-		*/
+		
+		/*
 		repository.postUserCustom(newUser.getUsername(), newUser.getPassword(), newUser.getUserRolle().toString(), newUser.getProfilePicture(), newUser.getWorkStartClockrMessage(), newUser.getBreakStartClockrMessage(), newUser.getBreakEndClockrMessage(), newUser.getWorkEndClockrMessage(), newUser.getVorname(), newUser.getNachname(), newUser.getAnrede(), newUser.getHandle());
 		
 		
 		User _user = new User(newUser.getUsername(), newUser.getPassword(), newUser.getUserRolle(),
 				newUser.getAnrede(), newUser.getHandle(), newUser.getWorkStartClockrMessage(),
 				newUser.getBreakStartClockrMessage(), newUser.getBreakEndClockrMessage(),
-				newUser.getWorkEndClockrMessage(), newUser.getProfilePicture());
+				newUser.getWorkEndClockrMessage(), newUser.getProfilePicture());*/
 		return _user;
 	}
 
-	@PutMapping("/users/{id}")
-	public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
+	//@PutMapping("/users/{id}")
+	//public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
+	@PUT
+	@Path("/users/{id}")
+	public ResponseEntity<User> updateUser(@PathParam("id") long id, User user) {
 		System.out.println("Update User with ID = " + id + "...");
 
 		//Optional<User> userData = repository.findById(id);

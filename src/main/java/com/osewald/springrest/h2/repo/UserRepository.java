@@ -16,12 +16,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
 	
 	@Query("Select usr from User usr where usr.username = :username")
 	User findByUsernameCustom(@Param("username") String username);
-	
-	@Modifying
-	@Transactional
-	@Query(value = "insert into User (id, username, password, user_rolle, profile_picture, work_Start_Clockr_Message, break_Start_Clockr_Message,  break_End_Clockr_Message, work_End_Clockr_Message, vorname, nachname, anrede, handle) VALUES (hibernate_sequence.nextval, :usr, :pwd, :rl, :pp, :ws, :bs,  :be, :we, :vor, :nach, :an, :hnd) ", nativeQuery = true)
-	void postUserCustom(@Param("usr") String usr,  @Param("pwd") String pw,  @Param("rl") String rl,  @Param("pp") String pp,  @Param("ws")String wd,  @Param("bs") String bs,   @Param("be") String be,  @Param("we") String we,  @Param("vor") String vor,  @Param("nach") String nach,  @Param("an") String an,  @Param("hnd") String hnd);
-	
+
 	@Modifying
 	@Transactional
 	@Query(value = "update User SET username = :usr, password = :pwd, user_rolle = :rl, profile_picture = :pp, work_Start_Clockr_Message = :ws, break_Start_Clockr_Message = :bs,  break_End_Clockr_Message = :be, work_End_Clockr_Message = :we, vorname = :vor, nachname = :nach, anrede = :an, handle = :hnd WHERE id = :id ", nativeQuery = true)

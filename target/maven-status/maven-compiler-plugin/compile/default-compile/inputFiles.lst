@@ -1,11 +1,12 @@
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\repo\ClockrRepository.java
+D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\config\ApplicationInitializer.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\controller\WorkdayController.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\controller\UserController.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\repo\DailyEventRepository.java
-D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\controller\RestConfig.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\model\Clockr.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\model\User.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\type\TimeStampType.java
+D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\auth\ClockRRealm.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\model\ProgramState.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\model\DailyEventDto.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\SpringBootRestApIsH2Application.java
@@ -16,4 +17,5 @@ D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewal
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\repo\UserRepository.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\controller\DailyEventController.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\controller\ClockrController.java
+D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\config\RestConfig.java
 D:\Users\Aimlezz\eclipse-workspace\SpringBootRestAPIsH2\src\main\java\com\osewald\springrest\h2\model\Workday.java
