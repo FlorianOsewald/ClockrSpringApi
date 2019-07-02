@@ -24,13 +24,15 @@ public interface WorkdayRepository extends CrudRepository<Workday, Long> {
 	@Query("SELECT wd FROM Workday wd WHERE wd.id=:id")
 	Optional<Workday> findByIdCustom(@Param("id") Long id);
 	
+
 	@Modifying
 	@Transactional
-	@Query(value = "insert into Workday (id, date, username) VALUES (hibernate_sequence.nextval, :date, :user) ", nativeQuery = true)
-	void postWorkdayCustom(@Param("date")Date date, @Param("user") String username);
+	@Query(value = "UPDATE Workday wd SET wd.date = :date, wd.username = :user where wd.id = :id")
+	void updateWorkdayCustom(@Param("id")long id, @Param("date")Date date, @Param("user") String username);
+	
 	
 	@Modifying
 	@Transactional
-	@Query(value = "delete from Workday where id = :id ", nativeQuery = true)
+	@Query(value = "delete from Workday wd where wd.id = :id ")
 	void deleteWorkdayCustom(@Param("id")Long id);
 }

@@ -17,14 +17,8 @@ public interface ClockrRepository extends CrudRepository<Clockr, Long> {
 	@Query("SELECT c from Clockr c WHERE c.user =:user")
 	List<Clockr> findByUserCustom(@Param("user")User user);
 	
-	@Query(value = "SELECT * FROM Clockr", nativeQuery = true)
+	@Query(value = "SELECT c FROM Clockr c")
 	List<Clockr> findAllCustom();
-	
-	@Modifying
-	@Transactional
-	@Query(value = "insert into Clockr (id, message, time, user_id) VALUES (hibernate_sequence.nextval, :message, :time, :user) ", nativeQuery = true)
-	void postClockrCustom(@Param("message")String message, @Param("time") Date time, @Param("user") Long usrId);
-	
 	
 	List<Clockr> findByUser(User user);
 }

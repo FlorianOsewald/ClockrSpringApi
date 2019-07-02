@@ -38,6 +38,7 @@ public class SpringBootRestApIsH2Application {
 
         final Map<String, String> chainDefinition = new HashMap<>();
         chainDefinition.put("/api/users/logout", "logout");
+        chainDefinition.put("/api/users/create", "authc, roles[Admin]");
         chainDefinition.put("/**", "pass-through");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(chainDefinition);
 

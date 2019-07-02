@@ -19,8 +19,8 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
 	@Modifying
 	@Transactional
-	@Query(value = "update User SET username = :usr, password = :pwd, user_rolle = :rl, profile_picture = :pp, work_Start_Clockr_Message = :ws, break_Start_Clockr_Message = :bs,  break_End_Clockr_Message = :be, work_End_Clockr_Message = :we, vorname = :vor, nachname = :nach, anrede = :an, handle = :hnd WHERE id = :id ", nativeQuery = true)
-	void updateUserCustom(@Param("id") Long id, @Param("usr") String usr,  @Param("pwd") String pw,  @Param("rl") String rl,  @Param("pp") String pp,  @Param("ws")String wd,  @Param("bs") String bs,   @Param("be") String be,  @Param("we") String we,  @Param("vor") String vor,  @Param("nach") String nach,  @Param("an") String an,  @Param("hnd") String hnd);
+	@Query(value = "update User c SET c.username = :usr, c.password = :pwd, c.userRolle = :rl, c.profilePicture = :pp, c.workStartClockrMessage = :ws, c.breakStartClockrMessage = :bs,  c.breakEndClockrMessage = :be, c.workEndClockrMessage = :we, c.vorname = :vor, c.nachname = :nach, c.anrede = :an, c.handle = :hnd WHERE c.id = :id ")
+	void updateUserCustom(@Param("id") Long id, @Param("usr") String usr,  @Param("pwd") String pw,  @Param("rl") UserRole rl,  @Param("pp") String pp,  @Param("ws")String wd,  @Param("bs") String bs,   @Param("be") String be,  @Param("we") String we,  @Param("vor") String vor,  @Param("nach") String nach,  @Param("an") String an,  @Param("hnd") String hnd);
 	
 	
 	@Query("SELECT usr FROM User usr WHERE usr.id=:id")

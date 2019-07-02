@@ -12,6 +12,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.osewald.springrest.h2.model.DailyEvent;
 import com.osewald.springrest.h2.model.DailyEventDto;
@@ -24,10 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-/*
-@RestController
-@RequestMapping("/api")
-*/
 @Component
 @Path("/api")
 public class DailyEventController {
@@ -38,15 +36,12 @@ public class DailyEventController {
 	@Autowired
 	WorkdayRepository wdRepo;
 
-	// @GetMapping("/dailyEvents/workday/{workday}")
-	// public List<DailyEvent> getEventsOfWorkday(@PathVariable Workday workday) {
 	@GET
 	@Path("/dailyEvents/workday/{workdayId}")
-	// public List<DailyEvent> getEventsOfWorkday(@PathParam("workday") Workday
-	// workday) {
-	public List<DailyEvent> getEventsOfWorkday(@PathParam("workdayId") long workdayId) {
+
+	public Response getEventsOfWorkday(@PathParam("workdayId") long workdayId) {
 		System.out.println("Getting all Daily Daily Events: ");
-		// List<DailyEvent> evnts = repository.findByWorkday(workday);
+
 		Optional<Workday> maybeWorkday = wdRepo.findById(workdayId);
 
 		List<DailyEvent> evnts = new ArrayList<>();
@@ -57,27 +52,31 @@ public class DailyEventController {
 		} else
 			evnts = null;
 
-		return evnts;
+		return Response.status(Status.OK).entity(evnts).build();
 	}
 
-	// @PostMapping("/dailyEvents/create")
-	// public DailyEvent postDailyEvent(@RequestBody DailyEventDto dto) {
 	@POST
 	@Path("/dailyEvents/create")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public DailyEvent postDailyEvent(DailyEventDto dto) {
+	public Response postDailyEvent(DailyEventDto dto) {
 		System.out.println("Creating Daily Event: ");
 		System.out.println("Daily Event: " + dto.getEvent().getEventType() + " " + dto.getEvent().getTime());
 		System.out.println("Workday of Event: " + dto.getWorkday().getId());
 
-		// Zurück zum originalen Code, da Insert in Custom Queries nicht unterstützt
-		// sind.
-		DailyEvent _dailyEvent = repository
-				.save(new DailyEvent(dto.getEvent().getEventType(), dto.getEvent().getTime(), dto.getWorkday()));
-		return _dailyEvent;
+		Optional<Workday> maybeWorkday = wdRepo.findById(dto.getWorkday().getId());
+
+		if (maybeWorkday.isPresent()) {
+			Workday workday = maybeWorkday.get();
+
+			DailyEvent _dailyEvent = repository
+					.save(new DailyEvent(dto.getEvent().getEventType(), dto.getEvent().getTime(), workday));
+
+			return Response.status(Status.OK).entity(_dailyEvent).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).build();
+		}
 	}
 
-	// @PutMapping("dailyEvents/{id}")
 	@PUT
 	@Path("dailyEvents/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -93,39 +92,31 @@ public class DailyEventController {
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-
 	}
 
-	// @DeleteMapping("dailyEvents/{id}")
 	@DELETE
 	@Path("dailyEvents/{id}")
-	public ResponseEntity<String> deleteDailyEvent(@PathParam("id") long id) {
+	public Response deleteDailyEvent(@PathParam("id") long id) {
 		System.out.println("Delete dailyEvent with ID = " + id + "...");
 
-		// repository.deleteById(id);
 		repository.deleteDailyEventCustom(id);
 
-		return new ResponseEntity<>("DailyEvent has been deleted!", HttpStatus.OK);
+		return Response.status(Status.OK).entity("Daily Event has been deleted!").build();
 	}
 
-	// @DeleteMapping("/dailyEvents/workday/{workday}")
 	@DELETE
 	@Path("/dailyEvents/workday/{workdayId}")
-	// public ResponseEntity<String> deleteEventsOfWorkday(@PathParam("workday")
-	// Workday workday) {
-	public ResponseEntity<String> deleteEventsOfWorkday(@PathParam("workdayId") long workdayId) {
+	public Response deleteEventsOfWorkday(@PathParam("workdayId") long workdayId) {
 		System.out.println("Delete All dailyEvents by Workday:" + workdayId + "...");
-
-		// repository.deleteAllByWorkday(workday);
 
 		Optional<Workday> maybeWorkday = wdRepo.findById(workdayId);
 
 		if (maybeWorkday.isPresent()) {
 			Workday workday = maybeWorkday.get();
 			repository.deleteAllByWorkdayCustom(workday);
-			return new ResponseEntity<>("DailyEvents have been deleted!", HttpStatus.OK);
+			return Response.status(Status.OK).entity("DailyEvents have been deleted!").build();
 		} else
-			return new ResponseEntity<>("DailyEvents have not been deleted!", HttpStatus.NOT_FOUND);
+			return Response.status(Status.NOT_FOUND).entity("DailyEvents have not been deleted!").build();
 
 	}
 

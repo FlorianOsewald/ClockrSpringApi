@@ -24,17 +24,11 @@ public interface DailyEventRepository extends CrudRepository<DailyEvent, Long> {
 	
 	@Modifying
 	@Transactional
-	@Query(value = "insert into DailyEvent (id, time, eventType, workday) VALUES (hibernate_sequence.nextval, :time, :event, :workday) ", nativeQuery = true)
-	void postDailyEventCustom(@Param("time")Timestamp time, @Param("event") ProgramState event,  @Param("workday") Workday workday);
-	
-	
-	@Modifying
-	@Transactional
-	@Query(value = "delete from DailyEvent where id = :id ", nativeQuery = true)
+	@Query(value = "delete from DailyEvent de where de.id = :id ")
 	void deleteDailyEventCustom(@Param("id")Long id);
 	
 	@Modifying
 	@Transactional
-	@Query(value = "delete from DailyEvent where workday = :wd ", nativeQuery = true)
+	@Query(value = "delete from DailyEvent de where de.workday = :wd ")
 	void deleteAllByWorkdayCustom(@Param("wd")Workday workday);
 }
